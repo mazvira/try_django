@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,13 +20,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-t3_v=j)2y*ji4kb%mqq3#hj5)+pqhtg-x-*w!1ubw=!figq3q9'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-t3_v=j)2y*ji4kb%mqq3#hj5)+pqhtg-x-*w!1ubw=!figq3q9')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = str(os.environ.get('DEBUG')) == '1'
 
+ENV_ALLOWED_HOST = os.environ.get('DJANGO_ALLOWED_HOST') or None
 ALLOWED_HOSTS = []
-
+if ENV_ALLOWED_HOST is not None:
+    ALLOWED_HOSTS = [ ENV_ALLOWED_HOST ]
 
 # Application definition
 
@@ -51,7 +53,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'trydjango.urls'
-
+LOGIN_URL = '/login/'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -124,3 +126,29 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+POSTGRES_DB = os.environ.get("POSTGRES_DB")
+POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+POSTGRES_USER = os.environ.get("POSTGRES_USER")
+POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
+POSTGRES_PORT = os.environ.get("POSTGRES_PORT")
+
+POSTGRES_READY = (
+    POSTGRES_DB is not None
+    and POSTGRES_PASSWORD is not None
+    and POSTGRES_USER is not None
+    and POSTGRES_HOST is not None
+    and POSTGRES_PORT is not None
+)
+
+if POSTGRES_READY:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": POSTGRES_DB,
+            "USER": POSTGRES_USER,
+            "PASSWORD": POSTGRES_PASSWORD,
+            "HOST": POSTGRES_HOST,
+            "PORT": POSTGRES_PORT,
+        }
+    }

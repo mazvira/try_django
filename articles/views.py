@@ -32,6 +32,19 @@ def article_search_view(request):
 
 @login_required
 def article_create_view(request, id=None):
+    form = ArticleForm(request.POST or None)
+    context = {
+        "form": form
+    }
+    if form.is_valid():
+        article_object = form.save() 
+        context['form'] = ArticleForm()
+
+    return render(request, "articles/create.html", context=context)
+
+'''
+old version (bad version of the code)
+def article_create_view(request, id=None):
     form = ArticleForm()
     context = {
         "form": form
@@ -49,8 +62,8 @@ def article_create_view(request, id=None):
             context['created'] = True
         
 
-    return render(request, "articles/create.html", context=context)
-
+    return render(request, "articles/create.html", context=context)    
+'''
 
 def article_detail_view(request, id=None):
     atricle_obj = None
