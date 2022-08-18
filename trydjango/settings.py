@@ -26,9 +26,9 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-t3_v=j)2y*ji4k
 DEBUG = str(os.environ.get('DEBUG')) == '1'
 
 ENV_ALLOWED_HOST = os.environ.get('DJANGO_ALLOWED_HOST') or None
-ALLOWED_HOSTS = []
-if ENV_ALLOWED_HOST is not None:
-    ALLOWED_HOSTS = [ ENV_ALLOWED_HOST ]
+ALLOWED_HOSTS = ['127.0.0.1']
+if not DEBUG:
+    ALLOWED_HOSTS += [ os.environ.get('DJANGO_ALLOWED_HOST') ]
 
 # Application definition
 
@@ -70,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'trydjango.wsgi.application'
+WSGI_APPLICATION = 'trydjango.wsgi.app'
 
 
 # Database
